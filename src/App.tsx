@@ -1,31 +1,21 @@
 import { Authenticated, ErrorComponent, GitHubBanner, Refine } from '@refinedev/core'
 import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
-
-import dataProvider, { GraphQLClient, liveProvider } from '@refinedev/nestjs-query'
-import routerBindings, {
-    CatchAllNavigate,
-    DocumentTitleHandler,
-    NavigateToResource,
-    UnsavedChangesNotifier,
-} from '@refinedev/react-router-v6'
-import { createClient } from 'graphql-ws'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
-import './App.css'
-import { authProvider } from './authProvider'
 import { Layout } from './components/layout'
 import { BlogPostCreate, BlogPostEdit, BlogPostList, BlogPostShow } from './pages/blog-posts'
 import { CategoryCreate, CategoryEdit, CategoryList, CategoryShow } from './pages/categories'
 import { ForgotPassword } from './pages/forgotPassword'
 import { Login } from './pages/login'
 import { Register } from './pages/register'
-
-const API_URL = 'https://api.nestjs-query.refine.dev/graphql'
-const WS_URL = 'wss://api.nestjs-query.refine.dev/graphql'
-
-const gqlClient = new GraphQLClient(API_URL)
-const wsClient = createClient({ url: WS_URL })
-
+import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
+import routerBindings, {
+    CatchAllNavigate,
+    DocumentTitleHandler,
+    NavigateToResource,
+    UnsavedChangesNotifier,
+} from '@refinedev/react-router-v6'
+import './App.css'
 function App() {
     return (
         <BrowserRouter>
@@ -33,8 +23,8 @@ function App() {
             <RefineKbarProvider>
                 <DevtoolsProvider>
                     <Refine
-                        dataProvider={dataProvider(gqlClient)}
-                        liveProvider={liveProvider(wsClient)}
+                        dataProvider={dataProvider}
+                        liveProvider={liveProvider}
                         routerProvider={routerBindings}
                         authProvider={authProvider}
                         resources={[
