@@ -1,14 +1,9 @@
-import { Authenticated, ErrorComponent, GitHubBanner, Refine } from '@refinedev/core'
+import { Authenticated, ErrorComponent, GitHubBanner, Refine, WelcomePage } from '@refinedev/core'
 import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
-import { Layout } from './components/layout'
-import { BlogPostCreate, BlogPostEdit, BlogPostList, BlogPostShow } from './pages/blog-posts'
-import { CategoryCreate, CategoryEdit, CategoryList, CategoryShow } from './pages/categories'
-import { ForgotPassword } from './pages/forgotPassword'
-import { Login } from './pages/login'
-import { Register } from './pages/register'
 import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
+import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage } from './pages'
 import routerBindings, {
     CatchAllNavigate,
     DocumentTitleHandler,
@@ -16,6 +11,8 @@ import routerBindings, {
     UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6'
 import './App.css'
+import { ROUTE_PATH } from './lib/route-path'
+import Layout from './components/layout/Layout'
 function App() {
     return (
         <BrowserRouter>
@@ -58,84 +55,33 @@ function App() {
                         }}>
                         <Routes>
                             <Route
+                                path={ROUTE_PATH.signUp()}
+                                element={<SignUpPage />}
+                            />
+                            <Route
+                                path={ROUTE_PATH.signIn()}
+                                element={<SignInPage />}
+                            />
+                            <Route
+                                path={ROUTE_PATH.forgotPassword()}
+                                element={<ForgotPasswordPage />}
+                            />
+                            <Route
                                 element={
                                     <Authenticated
-                                        key='authenticated-inner'
-                                        fallback={<CatchAllNavigate to='/login' />}>
+                                        key='authenticated-layout'
+                                        fallback={<CatchAllNavigate to={ROUTE_PATH.signIn()} />}>
                                         <Layout>
-                                            <Outlet />
+                                            <NavigateToResource />
                                         </Layout>
                                     </Authenticated>
                                 }>
                                 <Route
                                     index
-                                    element={<NavigateToResource resource='blog_posts' />}
-                                />
-                                <Route path='/blog-posts'>
-                                    <Route
-                                        index
-                                        element={<BlogPostList />}
-                                    />
-                                    <Route
-                                        path='create'
-                                        element={<BlogPostCreate />}
-                                    />
-                                    <Route
-                                        path='edit/:id'
-                                        element={<BlogPostEdit />}
-                                    />
-                                    <Route
-                                        path='show/:id'
-                                        element={<BlogPostShow />}
-                                    />
-                                </Route>
-                                <Route path='/categories'>
-                                    <Route
-                                        index
-                                        element={<CategoryList />}
-                                    />
-                                    <Route
-                                        path='create'
-                                        element={<CategoryCreate />}
-                                    />
-                                    <Route
-                                        path='edit/:id'
-                                        element={<CategoryEdit />}
-                                    />
-                                    <Route
-                                        path='show/:id'
-                                        element={<CategoryShow />}
-                                    />
-                                </Route>
-                                <Route
-                                    path='*'
-                                    element={<ErrorComponent />}
-                                />
-                            </Route>
-                            <Route
-                                element={
-                                    <Authenticated
-                                        key='authenticated-outer'
-                                        fallback={<Outlet />}>
-                                        <NavigateToResource />
-                                    </Authenticated>
-                                }>
-                                <Route
-                                    path='/login'
-                                    element={<Login />}
-                                />
-                                <Route
-                                    path='/register'
-                                    element={<Register />}
-                                />
-                                <Route
-                                    path='/forgot-password'
-                                    element={<ForgotPassword />}
+                                    element={<MainPage />}
                                 />
                             </Route>
                         </Routes>
-
-                        <RefineKbar />
                         <UnsavedChangesNotifier />
                         <DocumentTitleHandler />
                     </Refine>

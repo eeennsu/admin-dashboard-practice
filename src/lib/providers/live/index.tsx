@@ -1,7 +1,6 @@
 import { createClient } from 'graphql-ws'
 import { liveProvider as graphqlLiveProvider } from '@refinedev/nestjs-query'
 
-export const API_BASE_URL = 'https://api.crm.refine.dev'
 export const WS_URL = 'wss://api.crm.refine.dev/graphql'
 
 export const wsClient =

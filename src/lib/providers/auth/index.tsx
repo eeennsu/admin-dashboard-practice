@@ -1,9 +1,9 @@
 import type { AuthProvider } from '@refinedev/core'
-import { API_URL, dataProvider } from '@lib/providers'
+import { API_URL, dataProvider } from '@/lib/providers'
 
 export const authCredentials = {
-    email: 'eunsudiso592@gmail.com',
-    password: 'demo1234',
+    email: 'michael.scott@dundermifflin.com',
+    password: 'demodemo',
 }
 
 const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'accessToken'
@@ -33,6 +33,8 @@ export const authProvider: AuthProvider = {
                 redirectTo: '/',
             }
         } catch (err) {
+            console.log('🚀  err:', err)
+
             const error = err as Error
 
             return {

@@ -1,7 +1,8 @@
+import type { FC } from 'react'
 import { useLogout, useMenu } from '@refinedev/core'
 import { NavLink } from 'react-router-dom'
 
-export const Menu = () => {
+const Menu: FC = () => {
     const { mutate: logout } = useLogout()
     const { menuItems } = useMenu()
 
@@ -18,3 +19,5 @@ export const Menu = () => {
         </nav>
     )
 }
+
+export default Menu
