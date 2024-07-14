@@ -1,12 +1,12 @@
 import type { CSSProperties, FC } from 'react'
-import { Avatar as AntdAvatar } from 'antd'
+import { Avatar as AntdAvatar, type AvatarProps } from 'antd'
+import { extractNameInitials } from '@/lib/utils/string'
 
-interface Props {
+interface Props extends AvatarProps {
     name?: string
-    style?: CSSProperties
 }
 
-const Avatar: FC<Props> = ({ name, style }) => {
+const Avatar: FC<Props> = ({ name, style, ...props }) => {
     return (
         <AntdAvatar
             alt={name}
@@ -17,8 +17,9 @@ const Avatar: FC<Props> = ({ name, style }) => {
                 alignItems: 'center',
                 border: 'none',
                 ...style,
-            }}>
-            {name}
+            }}
+            {...props}>
+            {extractNameInitials(name)}
         </AntdAvatar>
     )
 }

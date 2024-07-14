@@ -1,18 +1,18 @@
-import { Authenticated, ErrorComponent, GitHubBanner, Refine, WelcomePage } from '@refinedev/core'
+import { Authenticated, GitHubBanner, Refine } from '@refinedev/core'
 import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
-import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
+import { RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
 import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage } from './pages'
 import routerBindings, {
     CatchAllNavigate,
     DocumentTitleHandler,
-    NavigateToResource,
     UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6'
 import './App.css'
 import { ROUTE_PATH } from './lib/route-path'
 import Layout from './components/layout/Layout'
+import { resources } from './lib/resources'
 function App() {
     return (
         <BrowserRouter>
@@ -24,28 +24,7 @@ function App() {
                         liveProvider={liveProvider}
                         routerProvider={routerBindings}
                         authProvider={authProvider}
-                        resources={[
-                            {
-                                name: 'blog_posts',
-                                list: '/blog-posts',
-                                create: '/blog-posts/create',
-                                edit: '/blog-posts/edit/:id',
-                                show: '/blog-posts/show/:id',
-                                meta: {
-                                    canDelete: true,
-                                },
-                            },
-                            {
-                                name: 'categories',
-                                list: '/categories',
-                                create: '/categories/create',
-                                edit: '/categories/edit/:id',
-                                show: '/categories/show/:id',
-                                meta: {
-                                    canDelete: true,
-                                },
-                            },
-                        ]}
+                        resources={resources}
                         options={{
                             syncWithLocation: true,
                             warnWhenUnsavedChanges: true,
@@ -72,7 +51,7 @@ function App() {
                                         key='authenticated-layout'
                                         fallback={<CatchAllNavigate to={ROUTE_PATH.signIn()} />}>
                                         <Layout>
-                                            <NavigateToResource />
+                                            <Outlet />
                                         </Layout>
                                     </Authenticated>
                                 }>

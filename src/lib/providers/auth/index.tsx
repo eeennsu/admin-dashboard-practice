@@ -1,5 +1,6 @@
 import type { AuthProvider } from '@refinedev/core'
 import { API_URL, dataProvider } from '@/lib/providers'
+import { ROUTE_PATH } from '@/lib/route-path'
 
 export const authCredentials = {
     email: 'michael.scott@dundermifflin.com',
@@ -14,6 +15,7 @@ export const authProvider: AuthProvider = {
             const { data } = await dataProvider.custom({
                 url: API_URL,
                 method: 'post',
+                headers: {},
                 meta: {
                     variables: { email },
                     rawQuery: `
@@ -30,11 +32,9 @@ export const authProvider: AuthProvider = {
 
             return {
                 success: true,
-                redirectTo: '/',
+                redirectTo: ROUTE_PATH.main(),
             }
         } catch (err) {
-            console.log('🚀  err:', err)
-
             const error = err as Error
 
             return {
@@ -51,6 +51,7 @@ export const authProvider: AuthProvider = {
             await dataProvider.custom({
                 url: API_URL,
                 method: 'post',
+                headers: {},
                 meta: {
                     rawQuery: `
                         query Me {
@@ -64,12 +65,12 @@ export const authProvider: AuthProvider = {
 
             return {
                 authenticated: true,
-                redirectTo: '/',
+                redirectTo: ROUTE_PATH.main(),
             }
         } catch (error) {
             return {
                 authenticated: false,
-                redirectTo: '/login',
+                redirectTo: ROUTE_PATH.signIn(),
             }
         }
     },
@@ -78,14 +79,14 @@ export const authProvider: AuthProvider = {
 
         return {
             success: true,
-            redirectTo: '/login',
+            redirectTo: ROUTE_PATH.signIn(),
         }
     },
     onError: async (error) => {
         if (error?.statusCode === 'UNAUTHENTICATED' || error?.status === 401 || error?.status === 403) {
             return {
                 logout: true,
-                redirectTo: '/login',
+                redirectTo: ROUTE_PATH.signIn(),
                 ...error,
             }
         }
