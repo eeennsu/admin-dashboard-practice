@@ -6,7 +6,7 @@ import { Button, Card, Drawer, Form, Input, Spin } from 'antd'
 import { UPDATE_USER_MUTATION } from '@/graphql/mutations'
 import { UpdateUserMutation, UpdateUserMutationVariables } from '@/graphql/types'
 import Avatar from './Avatar'
-import { extractNameInitials } from '@/lib/utils/string'
+import { extractNameInitials } from '@/lib/utils'
 import Text from '../common/Text'
 import type { FC } from 'react'
 

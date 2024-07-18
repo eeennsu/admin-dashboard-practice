@@ -50,6 +50,6 @@ export const fetchWrapper: Fetch = async (url, options) => {
     if (error) {
         throw error
     }
-
+  
     return response
 }

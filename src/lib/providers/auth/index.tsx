@@ -19,16 +19,16 @@ export const authProvider: AuthProvider = {
                 meta: {
                     variables: { email },
                     rawQuery: `
-                    mutation Login($email: String!) {
-                        login(loginInput: { email: $email }) {
-                            accessToken
+                        mutation Login($email: String!) {
+                            login(loginInput: { email: $email }) {
+                                accessToken
+                            }
                         }
-                    }
-                `,
+                    `,
                 },
             })
 
-            localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, data?.login?.accessToken)
+            localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, data.login.accessToken)
 
             return {
                 success: true,
@@ -68,6 +68,7 @@ export const authProvider: AuthProvider = {
                 redirectTo: ROUTE_PATH.main(),
             }
         } catch (error) {
+            console.log('check?', error)
             return {
                 authenticated: false,
                 redirectTo: ROUTE_PATH.signIn(),

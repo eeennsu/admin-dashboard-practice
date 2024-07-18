@@ -1,6 +1,6 @@
 import type { CSSProperties, FC } from 'react'
 import { Avatar as AntdAvatar, type AvatarProps } from 'antd'
-import { extractNameInitials } from '@/lib/utils/string'
+import { extractNameInitials } from '@/lib/utils'
 
 interface Props extends AvatarProps {
     name?: string

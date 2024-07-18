@@ -4,7 +4,6 @@ import { ROUTE_PATH } from '../route-path'
 
 /*
     rules: Resource in refine 
-
     list: read datas
     show: read a data
     create: create a data
@@ -33,7 +32,7 @@ export const resources: ResourceProps[] = [
         },
     },
     {
-        name: 'Tasks',
+        name: 'tasks',
         list: ROUTE_PATH.tasks.list(),
         show: ROUTE_PATH.tasks.show(),
         create: ROUTE_PATH.tasks.create(),

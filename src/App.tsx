@@ -1,6 +1,6 @@
 import { Authenticated, GitHubBanner, Refine } from '@refinedev/core'
 import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
-import { RefineKbarProvider } from '@refinedev/kbar'
+import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
 import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage } from './pages'
@@ -13,6 +13,7 @@ import './App.css'
 import { ROUTE_PATH } from './lib/route-path'
 import Layout from './components/layout/Layout'
 import { resources } from './lib/resources'
+import { notificationProvider } from './lib/providers/notification'
 function App() {
     return (
         <BrowserRouter>
@@ -24,6 +25,7 @@ function App() {
                         liveProvider={liveProvider}
                         routerProvider={routerBindings}
                         authProvider={authProvider}
+                        notificationProvider={notificationProvider}
                         resources={resources}
                         options={{
                             syncWithLocation: true,
@@ -61,6 +63,7 @@ function App() {
                                 />
                             </Route>
                         </Routes>
+                        <RefineKbar />
                         <UnsavedChangesNotifier />
                         <DocumentTitleHandler />
                     </Refine>

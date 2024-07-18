@@ -1,12 +1,20 @@
 import { CalendarOutlined } from '@ant-design/icons'
-import { Card, List } from 'antd'
+import { Badge, Card, List } from 'antd'
 import { useState, type FC } from 'react'
 import Text from '@/components/common/Text'
+import UpcomingSkeleton from '../Skeleton/UpcomingSkeleton'
+import { useList } from '@refinedev/core'
+import { DASHBORAD_CALENDAR_UPCOMING_EVENTS_QUERY } from '@/graphql/queries'
 
 const UpcomingEvents: FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const loadingDataSource = new Array(5).map((_, i) => ({ id: i }))
+    const { data, isLoading: isEventsLoading } = useList({
+        resource: 'events',
+        meta: {
+            gqlQuery: DASHBORAD_CALENDAR_UPCOMING_EVENTS_QUERY,
+        },
+    })
 
     return (
         <Card
@@ -23,9 +31,34 @@ const UpcomingEvents: FC = () => {
             {isLoading ? (
                 <List
                     itemLayout='horizontal'
-                    dataSource={loadingDataSource}></List>
+                    dataSource={Array.from({ length: 5 }).map((_, i) => ({
+                        id: i,
+                    }))}
+                    renderItem={() => <UpcomingSkeleton />}></List>
             ) : (
-                <List></List>
+                <List
+                    itemLayout='horizontal'
+                    dataSource={[]}
+                    renderItem={(item) => {
+                        // const renderDate = getDate(item.startDate, item.startDate)
+
+                        return (
+                            <List.Item>
+                                {/* <List.Item.Meta
+                                    avatar={<Badge color={item.color} />}
+                                    title={
+                                        <Text
+                                            strong
+                                            ellipsis={{ tooltip: true }}>
+                                            {item.title}
+                                        </Text>
+                                    }
+                                    description='Event Description'
+                                /> */}
+                            </List.Item>
+                        )
+                    }}
+                />
             )}
         </Card>
     )
