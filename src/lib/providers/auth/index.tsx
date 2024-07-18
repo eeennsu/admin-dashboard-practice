@@ -7,7 +7,7 @@ export const authCredentials = {
     password: 'demodemo',
 }
 
-const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'accessToken'
+export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token'
 
 export const authProvider: AuthProvider = {
     login: async ({ email }) => {

@@ -1,8 +1,9 @@
 import { GraphQLFormattedError } from 'graphql'
 import { CustomError, Fetch } from './types'
+import { LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '../providers';
 
 export const customFetch: Fetch = async (url, options) => {
-    const accessToken = localStorage.getItem('access_token')
+    const accessToken = localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
 
     const headers = (options?.headers as Record<string, string>) || {}
 
