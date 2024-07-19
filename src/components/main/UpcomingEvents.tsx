@@ -16,6 +16,8 @@ const UpcomingEvents: FC = () => {
         },
     })
 
+    console.log('data', data)
+
     return (
         <Card
             title={<CardTitle />}

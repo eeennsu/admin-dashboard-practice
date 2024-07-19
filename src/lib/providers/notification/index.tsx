@@ -4,7 +4,6 @@ export const notificationProvider: NotificationProvider = {
     open: ({ message, description, type }) => {
         alert(` ${type} // ${message} // ${description}`)
     },
-    close: () => {
-        console.log('close')
-    },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    close: () => {},
 }

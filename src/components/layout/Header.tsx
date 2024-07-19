@@ -19,7 +19,6 @@ const Header: FC = () => {
                 align='center'
                 size='middle'>
                 <CurrentUser />
-                <div>hello!</div>
             </Space>
         </Layout.Header>
     )

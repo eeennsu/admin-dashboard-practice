@@ -14,6 +14,7 @@ import { ROUTE_PATH } from './lib/route-path'
 import Layout from './components/layout/Layout'
 import { resources } from './lib/resources'
 import { notificationProvider } from './lib/providers/notification'
+
 function App() {
     return (
         <BrowserRouter>

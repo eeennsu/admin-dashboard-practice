@@ -1,5 +1,6 @@
 import { createClient } from 'graphql-ws'
 import { liveProvider as graphqlLiveProvider } from '@refinedev/nestjs-query'
+import { LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '../auth'
 
 export const WS_URL = 'wss://api.crm.refine.dev/graphql'
 
@@ -8,7 +9,7 @@ export const wsClient =
         ? createClient({
               url: WS_URL,
               connectionParams: () => {
-                  const accessToken = localStorage.getItem('accessToken')
+                  const accessToken = localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
 
                   return {
                       headers: {
