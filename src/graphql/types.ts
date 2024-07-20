@@ -75,7 +75,7 @@ export type DashboardCalendarUpcomingEventsQueryVariables = Types.Exact<{
     paging: Types.OffsetPaging
 }>
 
-export type DashboardCalendarUpcomingEventsQuery = {
+export type DashboardCalendarEventsQuery = {
     events: Pick<Types.EventConnection, 'totalCount'> & {
         nodes: Array<Pick<Types.Event, 'id' | 'title' | 'color' | 'startDate' | 'endDate'>>
     }

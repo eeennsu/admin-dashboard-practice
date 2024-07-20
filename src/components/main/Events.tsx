@@ -1,22 +1,45 @@
 import { CalendarOutlined } from '@ant-design/icons'
 import { Badge, Card, List } from 'antd'
-import { useState, type FC } from 'react'
+import { type FC } from 'react'
 import Text from '@/components/common/Text'
 import UpcomingSkeleton from '../Skeleton/UpcomingSkeleton'
-import { useList } from '@refinedev/core'
-import { DASHBORAD_CALENDAR_UPCOMING_EVENTS_QUERY } from '@/graphql/queries'
+import { HttpError, useList } from '@refinedev/core'
+import { DASHBORAD_CALENDAR_EVENTS_QUERY } from '@/graphql/queries'
+import { getEmptyArray, isEmptyArray } from '@/lib/utils'
+import { getSchedule } from '../../lib/utils/date'
+import dayjs from 'dayjs'
+import { DashboardCalendarEventsQuery } from '@/graphql/types'
 
-const UpcomingEvents: FC = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+type DisplayedEvent = DashboardCalendarEventsQuery['events']['nodes'][number]
 
-    const { data, isLoading: isEventsLoading } = useList({
+type Props = {
+    type: 'previous' | 'upcoming'
+    pageSize?: number
+}
+
+const Events: FC<Props> = ({ type, pageSize = 5 }) => {
+    const { data, isLoading } = useList<DisplayedEvent, HttpError>({
         resource: 'events',
         meta: {
-            gqlQuery: DASHBORAD_CALENDAR_UPCOMING_EVENTS_QUERY,
+            gqlQuery: DASHBORAD_CALENDAR_EVENTS_QUERY,
         },
+        pagination: {
+            pageSize,
+        },
+        sorters: [
+            {
+                field: 'startDate',
+                order: 'asc',
+            },
+        ],
+        filters: [
+            {
+                field: 'startDate',
+                operator: type === 'upcoming' ? 'gte' : 'lte',
+                value: dayjs().format('YYYY-MM-DD'),
+            },
+        ],
     })
-
-    console.log('data', data)
 
     return (
         <Card
@@ -33,40 +56,45 @@ const UpcomingEvents: FC = () => {
             {isLoading ? (
                 <List
                     itemLayout='horizontal'
-                    dataSource={Array.from({ length: 5 }).map((_, i) => ({
-                        id: i,
-                    }))}
-                    renderItem={() => <UpcomingSkeleton />}></List>
+                    dataSource={getEmptyArray()}
+                    renderItem={() => <UpcomingSkeleton />}
+                />
             ) : (
                 <List
                     itemLayout='horizontal'
-                    dataSource={[]}
+                    dataSource={data?.data || []}
                     renderItem={(item) => {
-                        // const renderDate = getDate(item.startDate, item.startDate)
-
                         return (
                             <List.Item>
-                                {/* <List.Item.Meta
+                                <List.Item.Meta
                                     avatar={<Badge color={item.color} />}
-                                    title={
+                                    title={<Text size='xs'>{getSchedule(item.startDate, item.endDate)}</Text>}
+                                    description={
                                         <Text
                                             strong
                                             ellipsis={{ tooltip: true }}>
                                             {item.title}
                                         </Text>
                                     }
-                                    description='Event Description'
-                                /> */}
+                                />
                             </List.Item>
                         )
                     }}
                 />
             )}
+
+            {!isLoading && isEmptyArray(data?.data) && (
+                <Text
+                    size='sm'
+                    style={{ textAlign: 'center' }}>
+                    No events found
+                </Text>
+            )}
         </Card>
     )
 }
 
-export default UpcomingEvents
+export default Events
 
 const CardTitle: FC = () => {
     return (

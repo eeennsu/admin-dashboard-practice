@@ -1,5 +1,5 @@
 import DealsChart from '@/components/main/DealsChart'
-import UpcomingEvents from '@/components/main/UpcomingEvents'
+import Events from '@/components/main/Events'
 import { DASHBOARD_TOTAL_COUNTS_QUERY } from '@/graphql/queries'
 import { DashboardTotalCountsQuery } from '@/graphql/types'
 import { useCustom } from '@refinedev/core'
@@ -22,7 +22,21 @@ export const MainPage: FC = () => {
                     xs={24}
                     sm={24}
                     xl={8}>
-                    <UpcomingEvents />
+                    <Events
+                        type='previous'
+                        pageSize={3}
+                    />
+                    {/* <DashboardTotalCountCard
+                        resource='companies'
+                        isLoading={isLoading}
+                        totalCount={data?.data.companies.totalCount}
+                    /> */}
+                </Col>
+                <Col
+                    xs={24}
+                    sm={24}
+                    xl={8}>
+                    <Events type='upcoming' />
                     {/* <DashboardTotalCountCard
                         resource='companies'
                         isLoading={isLoading}
@@ -66,7 +80,7 @@ export const MainPage: FC = () => {
                     style={{
                         height: '460px',
                     }}>
-                    {/* <UpcomingEvents /> */}
+                    {/* <Events /> */}
                     Lorem ipsum dolor sit amet.
                 </Col>
                 <Col

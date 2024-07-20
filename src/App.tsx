@@ -48,7 +48,7 @@ function App() {
                                 path={ROUTE_PATH.forgotPassword()}
                                 element={<ForgotPasswordPage />}
                             />
-                            <Route
+                            {/* <Route
                                 element={
                                     <Authenticated
                                         key='authenticated-layout'
@@ -57,12 +57,12 @@ function App() {
                                             <Outlet />
                                         </Layout>
                                     </Authenticated>
-                                }>
-                                <Route
-                                    index
-                                    element={<MainPage />}
-                                />
-                            </Route>
+                                }> */}
+                            <Route
+                                index
+                                element={<MainPage />}
+                            />
+                            {/* </Route> */}
                         </Routes>
                         <RefineKbar />
                         <UnsavedChangesNotifier />
