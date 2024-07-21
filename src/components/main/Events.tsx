@@ -43,14 +43,28 @@ const Events: FC<Props> = ({ type, pageSize = 5 }) => {
 
     return (
         <Card
-            title={<CardTitle />}
+            title={
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}>
+                    <CalendarOutlined />
+                    <Text
+                        size='sm'
+                        style={{ marginLeft: '0.7rem' }}>
+                        {type === 'previous' ? 'Previous' : ' Upcoming'} Events
+                    </Text>
+                </div>
+            }
             style={{ height: '100%' }}
             styles={{
                 header: {
                     padding: '8px 16px',
                 },
                 body: {
-                    padding: '0 1rem',
+                    padding: '0 16px',
                 },
             }}>
             {isLoading ? (
@@ -95,21 +109,3 @@ const Events: FC<Props> = ({ type, pageSize = 5 }) => {
 }
 
 export default Events
-
-const CardTitle: FC = () => {
-    return (
-        <div
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-            }}>
-            <CalendarOutlined />
-            <Text
-                size='sm'
-                style={{ marginLeft: '0.7rem' }}>
-                Upcoming Events
-            </Text>
-        </div>
-    )
-}

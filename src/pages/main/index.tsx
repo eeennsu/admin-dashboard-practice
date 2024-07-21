@@ -1,9 +1,10 @@
+import DashboardTotalCard from '@/components/main/DashboardTotalCard'
 import DealsChart from '@/components/main/DealsChart'
 import Events from '@/components/main/Events'
 import { DASHBOARD_TOTAL_COUNTS_QUERY } from '@/graphql/queries'
 import { DashboardTotalCountsQuery } from '@/graphql/types'
 import { useCustom } from '@refinedev/core'
-import { Col, Row } from 'antd'
+import { Col, Flex, Row } from 'antd'
 import { FC } from 'react'
 
 export const MainPage: FC = () => {
@@ -16,15 +17,19 @@ export const MainPage: FC = () => {
     })
 
     return (
-        <div>
-            <Row gutter={[32, 32]}>
+        <Flex
+            wrap
+            vertical
+            gap='large'>
+            <Row gutter={[30, 30]}>
                 <Col
                     xs={24}
                     sm={24}
                     xl={8}>
-                    <Events
-                        type='previous'
-                        pageSize={3}
+                    <DashboardTotalCard
+                        resource='companies'
+                        isLoading={isLoading}
+                        total={data?.data.companies.totalCount}
                     />
                     {/* <DashboardTotalCountCard
                         resource='companies'
@@ -32,6 +37,52 @@ export const MainPage: FC = () => {
                         totalCount={data?.data.companies.totalCount}
                     /> */}
                 </Col>
+                <Col
+                    xs={24}
+                    sm={24}
+                    xl={8}>
+                    <DashboardTotalCard
+                        resource='contracts'
+                        isLoading={isLoading}
+                        total={data?.data.contacts.totalCount}
+                    />
+                    {/* <DashboardTotalCountCard
+                        resource='companies'
+                        isLoading={isLoading}
+                        totalCount={data?.data.companies.totalCount}
+                    /> */}
+                </Col>
+                <Col
+                    xs={24}
+                    sm={24}
+                    xl={8}>
+                    <DashboardTotalCard
+                        resource='deals'
+                        isLoading={isLoading}
+                        total={data?.data.deals.totalCount}
+                    />
+                    {/* <DashboardTotalCount>Card
+                        resource='companies'
+                        isLoading={isLoading}
+                        totalCount={data?.data.companies.totalCount}
+                    /> */}
+                </Col>
+            </Row>
+            <Row gutter={[30, 30]}>
+                {/* <Col
+                    xs={24}
+                    sm={24}
+                    xl={8}>
+                    <Events
+                        type='previous'
+                        pageSize={5}
+                    />
+                    <DashboardTotalCountCard
+                        resource='companies'
+                        isLoading={isLoading}
+                        totalCount={data?.data.companies.totalCount}
+                    />
+                </Col> */}
                 <Col
                     xs={24}
                     sm={24}
@@ -46,14 +97,13 @@ export const MainPage: FC = () => {
                 <Col
                     xs={24}
                     sm={24}
-                    xl={8}>
+                    xl={16}>
                     {/* <DashboardTotalCountCard
                         resource='contacts'
                         isLoading={isLoading}
                         totalCount={data?.data.contacts.totalCount}
                     /> */}
                     <DealsChart />
-                    Lorem ipsum dolor sit amet.
                 </Col>
                 <Col
                     xs={24}
@@ -69,7 +119,7 @@ export const MainPage: FC = () => {
             </Row>
 
             <Row
-                gutter={[32, 32]}
+                gutter={[30, 30]}
                 style={{
                     marginTop: '32px',
                 }}>
@@ -106,6 +156,6 @@ export const MainPage: FC = () => {
                     Lorem ipsum dolor sit amet.
                 </Col>
             </Row>
-        </div>
+        </Flex>
     )
 }
