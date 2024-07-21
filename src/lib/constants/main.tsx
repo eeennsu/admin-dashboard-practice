@@ -3,7 +3,6 @@ import { ShopOutlined, TeamOutlined, AuditOutlined } from '@ant-design/icons'
 
 export type TotalCountType = 'companies' | 'contacts' | 'deals'
 
-
 export const totalCountVariants: {
     [key in TotalCountType]: {
         primaryColor: string
