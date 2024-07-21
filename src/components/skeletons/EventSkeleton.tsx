@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import { Badge, List, Skeleton } from 'antd'
 
-const UpcomingSkeleton: FC = () => {
+const EventSkeleton: FC = () => {
     return (
         <List.Item>
             <List.Item.Meta
@@ -29,4 +29,4 @@ const UpcomingSkeleton: FC = () => {
     )
 }
 
-export default UpcomingSkeleton
+export default EventSkeleton

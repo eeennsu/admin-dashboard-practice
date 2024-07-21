@@ -68,7 +68,6 @@ export const authProvider: AuthProvider = {
                 redirectTo: ROUTE_PATH.main(),
             }
         } catch (error) {
-            console.log('check?', error)
             return {
                 authenticated: false,
                 redirectTo: ROUTE_PATH.signIn(),

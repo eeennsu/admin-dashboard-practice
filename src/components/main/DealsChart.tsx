@@ -40,7 +40,6 @@ const DealsChart: FC = () => {
         seriesField: 'state',
         startOnZero: true,
         smooth: true,
-
         yAxis: {
             tickCount: 10,
             label: {
