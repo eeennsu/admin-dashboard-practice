@@ -1,9 +1,9 @@
 import { Card, Flex, Skeleton } from 'antd'
 import type { FC } from 'react'
-import {} from '@ant-design/icons'
 import { TotalCountType, totalCountVariants } from '@/lib/constants/main'
 import Text from '../common/Text'
-import { Area, AreaConfig } from '@ant-design/plots'
+import { Area, AreaChart, CartesianGrid } from 'recharts'
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 
 interface Props {
     resource: TotalCountType
@@ -14,42 +14,12 @@ interface Props {
 const DashboardTotalCard: FC<Props> = ({ resource, isLoading, totalCount }) => {
     const { data, icon, title, primaryColor, secondaryColor } = totalCountVariants[resource]
 
-    const config: AreaConfig = {
-        data: totalCount ? totalCountVariants[resource].data : [],
-        xField: 'index',
-        yField: 'value',
-        appendPadding: [4, 4, 4, 4],
-        syncViewPadding: true,
-        autoFit: true,
-        tooltip: false,
-        smooth: true,
-        animation: true,
-        yAxis: {
-            tickCount: 3,
-            label: {
-                style: {
-                    stroke: 'transparent',
-                },
-                formatter: (v) => {
-                    return `${+v / 1000}k`
-                },
-            },
+    const chartConfig = {
+        value: {
+            label: 'value',
+            color: totalCountVariants[resource].primaryColor,
         },
-        height: 100,
-        point: {
-            shape: 'circle',
-            size: 4,
-            color: primaryColor,
-        },
-        line: {
-            color: primaryColor,
-        },
-        areaStyle: () => {
-            return {
-                fill: `l(270) 0:#fff 0.2:${secondaryColor} 1:${primaryColor}`,
-            }
-        },
-    }
+    } satisfies ChartConfig
 
     return (
         <Card
@@ -92,10 +62,50 @@ const DashboardTotalCard: FC<Props> = ({ resource, isLoading, totalCount }) => {
                         {isLoading ? <Skeleton.Button style={{ marginTop: 8, width: 70 }} /> : totalCount}
                     </Text>
                 </Flex>
-                <Area
-                    {...config}
-                    style={{ width: '50%' }}
-                />
+                <ChartContainer
+                    style={{
+                        width: '50%',
+                        paddingBlock: 12,
+                    }}
+                    config={chartConfig}>
+                    <AreaChart
+                        accessibilityLayer
+                        data={totalCount ? totalCountVariants[resource].data : []}>
+                        <CartesianGrid vertical={false} />
+                        <ChartTooltip
+                            cursor={true}
+                            content={<ChartTooltipContent />}
+                        />
+                        <defs>
+                            <linearGradient
+                                id={`fillValue-${resource}`}
+                                x1='0'
+                                y1='0'
+                                x2='0'
+                                y2='1'>
+                                <stop
+                                    offset='10%'
+                                    stopColor={totalCountVariants[resource].primaryColor}
+                                    stopOpacity={0.8}
+                                />
+                                <stop
+                                    offset='90%'
+                                    stopColor={totalCountVariants[resource].primaryColor}
+                                    stopOpacity={0.1}
+                                />
+                            </linearGradient>
+                        </defs>
+                        <Area
+                            dataKey='value'
+                            type='natural'
+                            fill={`url(#fillValue-${resource})`}
+                            fillOpacity={0.3}
+                            stroke={totalCountVariants[resource].primaryColor}
+                            strokeWidth={2.6}
+                            stackId='a'
+                        />
+                    </AreaChart>
+                </ChartContainer>
             </Flex>
         </Card>
     )

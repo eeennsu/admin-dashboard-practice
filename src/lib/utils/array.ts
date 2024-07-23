@@ -45,7 +45,7 @@ const mapDeals = (deals: DealAggregate[] = [], state: string): MappedDealData[] 
 }
 
 // Map deals data to the format required by the chart
-export const mapDealsData = (dealStages?: DealStage[]): MappedDealData[] => {
+export const mapDealsData = (dealStages?: DealStage[]) => {
     if (!dealStages) {
         return []
     }
@@ -58,5 +58,33 @@ export const mapDealsData = (dealStages?: DealStage[]): MappedDealData[] => {
     const lostDeals = mapDeals(lost?.dealsAggregate, 'Lost')
 
     // Combine the won and lost deals and sort them by time
-    return [...wonDeals, ...lostDeals].sort((a, b) => a.timeUnix - b.timeUnix)
+    const converted = [...wonDeals, ...lostDeals].sort((a, b) => a.timeUnix - b.timeUnix)
+
+    const result = converted.reduce<ChartData[]>((acc, cur) => {
+        const existing = acc.find((data) => data.timeText === cur.timeText)
+
+        if (existing) {
+            if (cur.state === 'Won') {
+                existing.won = cur.value
+            } else {
+                existing.lost = cur.value
+            }
+        } else {
+            acc.push({
+                timeText: cur.timeText,
+                ...(cur.state === 'Won' && { won: cur.value }),
+                ...(cur.state === 'Lost' && { lost: cur.value }),
+            })
+        }
+
+        return acc
+    }, [])
+
+    return result
+}
+
+type ChartData = {
+    timeText: string
+    won?: number
+    lost?: number
 }
