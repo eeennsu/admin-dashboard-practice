@@ -3,6 +3,14 @@
     "version": "0.1.0",
     "private": true,
     "type": "module",
+    "scripts": {
+        "dev": "refine dev",
+        "build": "tsc && refine build",
+        "preview": "refine start",
+        "refine": "refine",
+        "codegen": "graphql-codegen",
+        "pretty": "prettier --write \"src/**/*.{js,ts,tsx,jsx,json,css}\""
+    },
     "dependencies": {
         "@ant-design/icons": "^5.3.7",
         "@ant-design/plots": "^1.2.5",
@@ -55,14 +63,6 @@
         "tailwindcss": "^3.4.3",
         "typescript": "^5.5.3",
         "vite": "^4.3.1"
-    },
-    "scripts": {
-        "dev": "refine dev",
-        "build": "tsc && refine build",
-        "preview": "refine start",
-        "refine": "refine",
-        "codegen": "graphql-codegen",
-        "pretty": "prettier --write \"src/**/*.{js,ts,tsx,jsx,json,css}\""
     },
     "browserslist": {
         "production": [
