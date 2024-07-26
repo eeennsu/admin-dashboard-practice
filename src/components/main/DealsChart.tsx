@@ -1,15 +1,21 @@
 import { Card } from 'antd'
 import { useMemo, type FC } from 'react'
 import { DollarOutlined } from '@ant-design/icons'
-// import { Area, type AreaConfig } from '@ant-design/plots'
 import Text from '../common/Text'
 import { HttpError, useList } from '@refinedev/core'
 import { DASHBOARD_DEALS_CHART_QUERY } from '@/graphql/queries'
-import { mapDealsData } from '@/lib/utils'
+import { getYearAndMonth, mapDealsData } from '@/lib/utils'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
 import { DashboardDealsChartQuery } from '@/graphql/types'
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart'
 
 export type DealStage = GetFieldsFromList<DashboardDealsChartQuery>
 
@@ -26,85 +32,16 @@ const DealsChart: FC = () => {
 
     const dealData = useMemo(() => mapDealsData(data?.data), [data?.data])
 
-    // const config: AreaConfig = {
-    //     data: dealData,
-    //     xField: 'timeText',
-    //     yField: 'value',
-    //     isStack: false,
-    //     annotations: [
-    //         {
-    //             type: 'line',
-    //             start: ['min', 'median'],
-    //             end: ['max', 'median'],
-    //             style: {
-    //                 stroke: '#f1b260',
-    //                 lineDash: [4, 4],
-    //             },
-    //         },
-    //     ],
-    //     seriesField: 'state',
-    //     startOnZero: true,
-    //     smooth: true,
-    //     yAxis: {
-    //         tickCount: 10,
-    //         label: {
-    //             formatter: (data) => {
-    //                 return `${+data / 1000}k`
-    //             },
-    //         },
-    //     },
-    //     tooltip: {
-    //         formatter: (data) => {
-    //             return {
-    //                 name: data.state,
-    //                 value: `${+data.value / 1000}k`,
-    //             }
-    //         },
-    //     },
-    //     areaStyle: {
-    //         fillOpacity: 0.15,
-    //     },
-    //     legend: {
-    //         offsetY: -8,
-    //         position: 'top-right',
-    //     },
-    //     point: {
-    //         shape: 'circle',
-    //         size: 5,
-    //     },
-    //     interactions: [
-    //         {
-    //             type: 'element-highlight',
-    //         },
-    //         {
-    //             type: 'element-active',
-    //         },
-    //     ],
-    //     slider: {
-    //         start: 0,
-    //         end: 1,
-    //     },
-    // }
-
     console.log(dealData)
 
-    const chartData = [
-        { timeText: 'January', desktop: 186, mobile: 80 },
-        { timeText: 'February', desktop: 305, mobile: 200 },
-        { timeText: 'March', desktop: 237, mobile: 120 },
-        { timeText: 'April', desktop: 73, mobile: 190 },
-        { timeText: 'May', desktop: 209, mobile: 130 },
-        { timeText: 'June', desktop: 214, mobile: 140 },
-    ]
-
     const chartConfig = {
-        desktop: {
-            label: 'Desktop',
-            color: 'hsl(var(--chart-1))',
+        won: {
+            label: 'Won',
+            color: '#235ac7',
         },
-        mobile: {
-            label: 'Mobile',
-            color: 'hsl(var(--chart-2))',
+        lost: {
+            label: 'Lost',
+            color: '#3ab16f',
         },
     } satisfies ChartConfig
 
@@ -133,38 +70,53 @@ const DealsChart: FC = () => {
             <ChartContainer config={chartConfig}>
                 <AreaChart
                     accessibilityLayer
-                    data={chartData}
-                    margin={{
-                        left: 12,
-                        right: 12,
-                    }}>
-                    <CartesianGrid vertical={false} />
+                    data={dealData}
+                    margin={{ right: 24, bottom: 12, top: 12 }}>
+                    <CartesianGrid
+                        vertical={false}
+                        stroke='lightgray'
+                        opacity={0.6}
+                    />
+                    <YAxis
+                        tickLine={false}
+                        tickMargin={8}
+                        tickCount={8}
+                        tickFormatter={(value) => {
+                            const formatted = value / 1000
+
+                            return formatted <= 0 ? '0' : `${formatted}k`
+                        }}
+                    />
                     <XAxis
                         dataKey='timeText'
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tickFormatter={(value) => value.slice(0, 3)}
+                        tickLine
+                        axisLine
+                        tickMargin={10}
+                        tickFormatter={(value) => getYearAndMonth(value)}
                     />
-                    <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent indicator='dot' />}
-                    />
-                    <Area
-                        dataKey='mobile'
-                        type='natural'
-                        fill='var(--color-mobile)'
-                        fillOpacity={0.4}
-                        stroke='var(--color-mobile)'
-                        stackId='a'
+                    <ChartTooltip content={<ChartTooltipContent indicator='dot' />} />
+                    <ChartLegend
+                        layout='horizontal'
+                        verticalAlign='top'
+                        content={<ChartLegendContent />}
                     />
                     <Area
-                        dataKey='desktop'
+                        dataKey='won'
                         type='natural'
-                        fill='var(--color-desktop)'
+                        fill='var(--color-won)'
                         fillOpacity={0.4}
-                        stroke='var(--color-desktop)'
-                        stackId='a'
+                        stroke='var(--color-won)'
+                        strokeWidth={1.8}
+                        connectNulls
+                    />
+                    <Area
+                        dataKey='lost'
+                        type='natural'
+                        fill='var(--color-lost)'
+                        fillOpacity={0.4}
+                        stroke='var(--color-lost)'
+                        strokeWidth={1.8}
+                        connectNulls
                     />
                 </AreaChart>
             </ChartContainer>

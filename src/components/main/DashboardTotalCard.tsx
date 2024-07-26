@@ -12,7 +12,7 @@ interface Props {
 }
 
 const DashboardTotalCard: FC<Props> = ({ resource, isLoading, totalCount }) => {
-    const { data, icon, title, primaryColor, secondaryColor } = totalCountVariants[resource]
+    const { icon, title } = totalCountVariants[resource]
 
     const chartConfig = {
         value: {

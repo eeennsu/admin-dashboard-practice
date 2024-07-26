@@ -4,7 +4,7 @@ import DealsChart from '@/components/main/DealsChart'
 import Events from '@/components/main/Events'
 import { DASHBOARD_TOTAL_COUNTS_QUERY } from '@/graphql/queries'
 import { DashboardTotalCountsQuery } from '@/graphql/types'
-import { useCustom, useResource } from '@refinedev/core'
+import { useCustom } from '@refinedev/core'
 import { Col, Flex, Row } from 'antd'
 import { FC } from 'react'
 
@@ -21,7 +21,7 @@ export const MainPage: FC = () => {
         <Flex
             wrap
             vertical
-            gap='large'>
+            gap={46}>
             <Row gutter={[30, 30]}>
                 <Col
                     xs={24}
