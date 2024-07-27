@@ -1,17 +1,26 @@
-import { useMemo, type FC } from 'react'
+import { useMemo, useState, type FC } from 'react'
 
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTable } from '@refinedev/core'
 import { COMPANIES_LIST_QUERY } from '@/graphql/queries'
-import { Space } from 'antd'
+import { Button, Space } from 'antd'
 import Avatar from '@/components/common/Avatar'
 import Text from '@/components/common/Text'
 import { CompaniesListQuery } from '@/graphql/types'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
-import { currencyNumber } from '@/lib/utils'
+import { cn, currencyNumber } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import CustomPagination from '@/components/common/CustomPagination'
 import TableFilter from '@/components/company-list/TableFilter'
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+} from '@tanstack/react-table'
+import { ArrowUpDown } from 'lucide-react'
 
 export type DisplayedCompany = GetFieldsFromList<CompaniesListQuery>
 
@@ -24,6 +33,7 @@ export const CompanyListPage: FC = () => {
         setCurrent,
         pageCount,
         setFilters,
+        setSorters,
     } = useTable<DisplayedCompany>({
         resource: 'companies',
         meta: {
@@ -55,23 +65,99 @@ export const CompanyListPage: FC = () => {
             ],
         },
     })
+    const [sorting, setSorting] = useState<SortingState>([])
 
-    const convertedData = useMemo(
-        () =>
-            data?.data.map((company) => {
-                const { dealsAggregate, ...rest } = company
+    const columns = useMemo<ColumnDef<DisplayedCompany>[]>(
+        () => [
+            {
+                id: 'name',
+                accessorKey: 'name',
+                header: () => (
+                    <div className='flex items-center justify-between min-w-[600px] px-5 py-4 flex-[0.9]'>
+                        <span>Company Title</span>
+                        <TableFilter setFilters={setFilters} />
+                    </div>
+                ),
+                cell: ({ row }) => (
+                    <Space
+                        size={10}
+                        className='min-w-[100px] px-5 py-4 flex-[0.05] text-center'>
+                        <Avatar
+                            shape='square'
+                            name={row.original.name}
+                            src={row.original.avatarUrl}
+                        />
+                        <Text
+                            className='whitespace-normal'
+                            size='lg'>
+                            {row.original.name}
+                        </Text>
+                    </Space>
+                ),
+            },
+            {
+                id: 'value',
+                accessorFn: ({ dealsAggregate }) => dealsAggregate.at(0)?.sum?.value,
+                header: ({ column }) => (
+                    <div
+                        className='flex items-center justify-center gap-2 '
+                        onClick={() => {
+                            column.toggleSorting(column.getIsSorted() === 'asc')
+                        }}>
+                        <p className='flex items-center p-4 cursor-pointer rounded-2xl w-f hover:bg-slate-200/80'>
+                            Open Deals Amount
+                            <ArrowUpDown className='w-4 h-4 ml-2' />
+                        </p>
+                    </div>
+                ),
+                cell: ({ row }) => {
+                    return (
+                        <Text
+                            className='font-bold text-center'
+                            size='lg'>
+                            {currencyNumber(row.original.dealsAggregate.at(0)?.sum?.value || 0)}
+                        </Text>
+                    )
+                },
+            },
+            {
+                id: 'actions',
+                header: 'Actions',
+                cell: ({ row }) => (
+                    <Space>
+                        <EditButton
+                            hideText
+                            size='large'
+                            recordItemId={row.original.id}
+                        />
+                        <DeleteButton
+                            hideText
+                            size='large'
+                            recordItemId={row.original.id}
+                        />
+                    </Space>
+                ),
+            },
+        ],
 
-                return {
-                    ...rest,
-                    value: dealsAggregate[0]?.sum?.value || 0,
-                }
-            }) || [],
-        [data?.data]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []
     )
 
-    const hasResult = convertedData.length > 0
+    const hasResult = Array.isArray(data?.data) && data?.data?.length > 0
     const hasNext = current < pageCount
     const hasPrevious = current > 1
+
+    const table = useReactTable({
+        data: data?.data || [],
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        state: {
+            sorting,
+        },
+        onSortingChange: setSorting,
+    })
 
     return (
         <main className='flex flex-col w-full gap-8'>
@@ -94,70 +180,45 @@ export const CompanyListPage: FC = () => {
             </section>
             <Table>
                 <TableHeader>
-                    <TableRow className='text-xl font-extrabold bg-slate-100 hover:bg-slate-200'>
-                        <TableHead className='min-w-[600px] px-5 py-4 flex-[0.9]'>
-                            <div className='flex items-center justify-between'>
-                                <span>Company Title</span>
-                                <TableFilter setFilters={setFilters} />
-                            </div>
-                        </TableHead>
-                        <TableHead className='min-w-[100px] px-5 py-4 flex-[0.05] text-center'>
-                            Open deals amount
-                        </TableHead>
-                        <TableHead className='min-w-[100px] px-5 py-4 flex-[0.05] text-center'>Actions</TableHead>
-                    </TableRow>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                                <TableHead
+                                    key={header.id}
+                                    className={cn(header.column.id !== 'name' && 'text-center')}>
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(header.column.columnDef.header, header.getContext())}
+                                </TableHead>
+                            ))}
+                        </TableRow>
+                    ))}
                 </TableHeader>
                 <TableBody className='bg-white'>
-                    {convertedData.length === 0 ? (
-                        <TableRow>
-                            <TableCell
-                                colSpan={3}
-                                className='text-center'>
-                                <Text size='sm'>No companies found</Text>
-                            </TableCell>
-                        </TableRow>
-                    ) : (
-                        convertedData?.map((company) => (
+                    {table.getRowModel().rows?.length !== 0 ? (
+                        table.getRowModel().rows.map((row) => (
                             <TableRow
-                                key={company.id}
+                                key={row.id}
                                 className='hover:bg-gray-100'>
-                                <TableCell>
-                                    <Space size={10}>
-                                        <Avatar
-                                            shape='square'
-                                            name={company.name}
-                                            src={company.avatarUrl}
-                                        />
-                                        <Text
-                                            className='whitespace-normal'
-                                            size='lg'>
-                                            {company.name}
-                                        </Text>
-                                    </Space>
-                                </TableCell>
-                                <TableCell className='text-center'>
-                                    <Text
-                                        className='font-bold'
-                                        size='lg'>
-                                        {currencyNumber(company.value)}
-                                    </Text>
-                                </TableCell>
-                                <TableCell className='text-center'>
-                                    <Space>
-                                        <EditButton
-                                            hideText
-                                            size='large'
-                                            recordItemId={company.id}
-                                        />
-                                        <DeleteButton
-                                            hideText
-                                            size='large'
-                                            recordItemId={company.id}
-                                        />
-                                    </Space>
-                                </TableCell>
+                                {row.getVisibleCells().map((cell) => (
+                                    <TableCell
+                                        key={cell.id}
+                                        className={cn(cell.column.id !== 'name' && 'text-center')}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={columns.length}>
+                                <Text
+                                    size='lg'
+                                    className='text-center'>
+                                    No data found
+                                </Text>
+                            </TableCell>
+                        </TableRow>
                     )}
                 </TableBody>
             </Table>
