@@ -27,7 +27,7 @@ const TableFilter: FC<Props> = ({ setFilters }) => {
                 <Input
                     placeholder='company name'
                     size='large'
-                    className='w-[300px]'
+                    className='w-[200px]'
                     value={searchKeyword}
                     onChange={(e) => setSearchKeyword(e.target.value)}
                     onKeyUp={(e) => {

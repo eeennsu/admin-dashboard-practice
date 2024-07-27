@@ -1,14 +1,13 @@
-import { useMemo, useState, type FC } from 'react'
-
+import { useEffect, useMemo, useState, type FC } from 'react'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTable } from '@refinedev/core'
 import { COMPANIES_LIST_QUERY } from '@/graphql/queries'
-import { Button, Space } from 'antd'
+import { Space } from 'antd'
 import Avatar from '@/components/common/Avatar'
 import Text from '@/components/common/Text'
 import { CompaniesListQuery } from '@/graphql/types'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
-import { cn, currencyNumber } from '@/lib/utils'
+import { cn, currencyNumber, getDate } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import CustomPagination from '@/components/common/CustomPagination'
 import TableFilter from '@/components/company-list/TableFilter'
@@ -20,7 +19,9 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown, Link2Icon } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { LoadingOutlined } from '@ant-design/icons'
 
 export type DisplayedCompany = GetFieldsFromList<CompaniesListQuery>
 
@@ -28,12 +29,12 @@ export const CompanyListPage: FC = () => {
     const go = useGo()
 
     const {
-        tableQueryResult: { data },
+        tableQueryResult: { data, isFetching },
+
         current,
         setCurrent,
         pageCount,
         setFilters,
-        setSorters,
     } = useTable<DisplayedCompany>({
         resource: 'companies',
         meta: {
@@ -73,7 +74,7 @@ export const CompanyListPage: FC = () => {
                 id: 'name',
                 accessorKey: 'name',
                 header: () => (
-                    <div className='flex items-center justify-between min-w-[600px] px-5 py-4 flex-[0.9]'>
+                    <div className='flex items-center justify-between min-w-[300px] max-w-[400px] px-5 py-4 flex-[0.9]'>
                         <span>Company Title</span>
                         <TableFilter setFilters={setFilters} />
                     </div>
@@ -81,18 +82,30 @@ export const CompanyListPage: FC = () => {
                 cell: ({ row }) => (
                     <Space
                         size={10}
-                        className='min-w-[100px] px-5 py-4 flex-[0.05] text-center'>
+                        className='min-w-[100px] max-w-[350px] px-5 py-4 flex-[0.05] text-center'>
                         <Avatar
                             shape='square'
                             name={row.original.name}
                             src={row.original.avatarUrl}
                         />
                         <Text
-                            className='whitespace-normal'
+                            className='truncate line-clamp-1'
                             size='lg'>
                             {row.original.name}
                         </Text>
                     </Space>
+                ),
+            },
+            {
+                id: 'industry',
+                accessorKey: 'industry',
+                header: 'Industry',
+                cell: ({ row }) => (
+                    <Text
+                        size='md'
+                        className='text-center'>
+                        {row.original.industry}
+                    </Text>
                 ),
             },
             {
@@ -119,6 +132,64 @@ export const CompanyListPage: FC = () => {
                         </Text>
                     )
                 },
+            },
+            {
+                id: 'country',
+                accessorKey: 'country',
+                header: 'Country',
+                cell: ({ row }) => (
+                    <Text
+                        size='md'
+                        className='text-center'>
+                        {row.original.country}
+                    </Text>
+                ),
+            },
+            {
+                id: 'website',
+                accessorKey: 'website',
+                header: 'Website',
+                cell: ({ row }) => (
+                    <Text
+                        size='md'
+                        className='flex justify-center'>
+                        {row?.original?.website ? (
+                            <Link to={row.original.website}>
+                                <Link2Icon />
+                            </Link>
+                        ) : (
+                            <Text
+                                size='md'
+                                className='text-center'>
+                                No website
+                            </Text>
+                        )}
+                    </Text>
+                ),
+            },
+            {
+                id: 'createdBy',
+                accessorKey: 'createdBy',
+                header: 'Creator',
+                cell: ({ row }) => (
+                    <Text
+                        size='md'
+                        className='text-center'>
+                        {row.original.createdBy.name}
+                    </Text>
+                ),
+            },
+            {
+                id: 'createdAt',
+                accessorKey: 'createdAt',
+                header: 'Created At',
+                cell: ({ row }) => (
+                    <Text
+                        size='md'
+                        className='text-center'>
+                        {getDate(row.original.createdAt)}
+                    </Text>
+                ),
             },
             {
                 id: 'actions',
@@ -178,7 +249,12 @@ export const CompanyListPage: FC = () => {
                     }
                 />
             </section>
-            <Table>
+            <Table className='relative'>
+                {isFetching && (
+                    <div className='absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
+                        <LoadingOutlined className='text-4xl' />
+                    </div>
+                )}
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
@@ -194,7 +270,7 @@ export const CompanyListPage: FC = () => {
                         </TableRow>
                     ))}
                 </TableHeader>
-                <TableBody className='bg-white'>
+                <TableBody className={cn('bg-white', isFetching && 'opacity-20')}>
                     {table.getRowModel().rows?.length !== 0 ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow

@@ -69,7 +69,7 @@ export type DashboardTotalCountsQuery = {
     deals: Pick<Types.DealConnection, 'totalCount'>
 }
 
-export type DashboardCalendarUpcomingEventsQueryVariables = Types.Exact<{
+export type DashboardCalendarEventsQueryVariables = Types.Exact<{
     filter: Types.EventFilter
     sorting?: Types.InputMaybe<Array<Types.EventSort> | Types.EventSort>
     paging: Types.OffsetPaging
@@ -145,7 +145,9 @@ export type CompaniesListQueryVariables = Types.Exact<{
 export type CompaniesListQuery = {
     companies: Pick<Types.CompanyConnection, 'totalCount'> & {
         nodes: Array<
-            Pick<Types.Company, 'id' | 'name' | 'avatarUrl'> & {
+            Pick<Types.Company, 'id' | 'name' | 'avatarUrl' | 'createdAt' | 'country' | 'website' | 'industry'> & {
+                salesOwner: Pick<Types.User, 'name'>
+                createdBy: Pick<Types.User, 'name'>
                 dealsAggregate: Array<{ sum?: Types.Maybe<Pick<Types.CompanyDealsSumAggregate, 'value'>> }>
             }
         >

@@ -114,6 +114,16 @@ export const COMPANIES_LIST_QUERY = gql`
                 id
                 name
                 avatarUrl
+                createdAt
+                salesOwner {
+                    name
+                }
+                createdBy {
+                    name
+                }
+                country
+                website
+                industry
                 # Get the sum of all deals in this company
                 dealsAggregate {
                     sum {

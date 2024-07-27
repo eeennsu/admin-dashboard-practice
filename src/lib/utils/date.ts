@@ -12,3 +12,9 @@ export const getYearAndMonth = (stringDate: string): string => {
 
     return date.format('YY년 M월')
 }
+
+export const getDate = (stringDate: string): string => {
+    const date = dayjs(stringDate)
+
+    return date.format('YYYY-MM-DD')
+}
