@@ -22,6 +22,9 @@ import {
 import { ArrowUpDown, Link2Icon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
+import { Popover } from '@/components/ui/popover'
+import { PopoverContent, PopoverTrigger } from '@radix-ui/react-popover'
+import { Button } from '@/components/ui/button'
 
 export type DisplayedCompany = GetFieldsFromList<CompaniesListQuery>
 
@@ -195,18 +198,31 @@ export const CompanyListPage: FC = () => {
                 id: 'actions',
                 header: 'Actions',
                 cell: ({ row }) => (
-                    <Space>
-                        <EditButton
-                            hideText
-                            size='large'
-                            recordItemId={row.original.id}
-                        />
-                        <DeleteButton
-                            hideText
-                            size='large'
-                            recordItemId={row.original.id}
-                        />
-                    </Space>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant='outline'
+                                className='border-gray-300 rounded-2xl focus:bg-slate-200'>
+                                ...
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            side='top'
+                            className='px-6 py-4 bg-blue-200 rounded-3xl'>
+                            <div className='flex items-center gap-2'>
+                                <EditButton
+                                    hideText
+                                    size='large'
+                                    recordItemId={row.original.id}
+                                />
+                                <DeleteButton
+                                    hideText
+                                    size='large'
+                                    recordItemId={row.original.id}
+                                />
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 ),
             },
         ],

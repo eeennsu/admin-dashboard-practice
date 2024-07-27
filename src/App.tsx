@@ -14,6 +14,7 @@ import { ROUTE_PATH } from './lib/route-path'
 import { resources } from './lib/resources'
 import { notificationProvider } from './lib/providers/notification'
 import Layout from './components/layout/Layout'
+import CompanyCreatePage from './pages/company/create'
 
 function App() {
     return (
@@ -65,6 +66,10 @@ function App() {
                                 <Route
                                     path={ROUTE_PATH.companies.list()}
                                     element={<CompanyListPage />}
+                                />
+                                <Route
+                                    path={ROUTE_PATH.companies.create()}
+                                    element={<CompanyCreatePage />}
                                 />
                             </Route>
                         </Routes>
