@@ -10,3 +10,10 @@ export const extractNameInitials = (name?: string, minLength = 2) => {
 
     return filtered.slice(0, minLength).toUpperCase()
 }
+
+export const currencyNumber = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(value)
+}

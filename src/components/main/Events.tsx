@@ -43,6 +43,9 @@ const Events: FC<Props> = ({ type, pageSize = 5 }) => {
 
     return (
         <Card
+            style={{
+                height: '100%',
+            }}
             title={
                 <div
                     style={{
@@ -58,17 +61,9 @@ const Events: FC<Props> = ({ type, pageSize = 5 }) => {
                     </Text>
                 </div>
             }
-            style={{ height: '100%' }}
             styles={{
                 header: {
                     padding: '8px 16px',
-                },
-                body: {
-                    height: '87%',
-                    padding: '0 16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
                 },
             }}>
             {isLoading ? (

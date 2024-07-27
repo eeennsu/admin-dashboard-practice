@@ -106,7 +106,7 @@ const LatestActivities: FC<Props> = ({ pageSize = 10 }) => {
                                         />
                                     }
                                     description={
-                                        <Space size={4}>
+                                        <Space size={10}>
                                             {item.user?.name && <Text strong>{item.user?.name}</Text>}
                                             <Text>
                                                 {item.action === 'CREATE'
@@ -117,7 +117,11 @@ const LatestActivities: FC<Props> = ({ pageSize = 10 }) => {
                                                     ? 'deleted'
                                                     : ''}
                                             </Text>
-                                            <Text strong></Text>
+                                            <Text
+                                                strong
+                                                type='success'>
+                                                {deal?.stage?.title}
+                                            </Text>
                                         </Space>
                                     }
                                 />

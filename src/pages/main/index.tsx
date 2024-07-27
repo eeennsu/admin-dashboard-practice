@@ -5,7 +5,7 @@ import Events from '@/components/main/Events'
 import { DASHBOARD_TOTAL_COUNTS_QUERY } from '@/graphql/queries'
 import { DashboardTotalCountsQuery } from '@/graphql/types'
 import { useCustom } from '@refinedev/core'
-import { Col, Flex, Row } from 'antd'
+import { Col, Row } from 'antd'
 import { FC } from 'react'
 
 export const MainPage: FC = () => {
@@ -18,10 +18,12 @@ export const MainPage: FC = () => {
     })
 
     return (
-        <Flex
-            wrap
-            vertical
-            gap={46}>
+        <main
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '30px',
+            }}>
             <Row gutter={[30, 30]}>
                 <Col
                     xs={24}
@@ -59,7 +61,7 @@ export const MainPage: FC = () => {
                     xs={24}
                     sm={24}
                     xl={8}>
-                    <Events type='upcoming' />
+                    <Events type='previous' />
                 </Col>
                 <Col
                     xs={24}
@@ -70,13 +72,10 @@ export const MainPage: FC = () => {
             </Row>
 
             <Row gutter={[30, 30]}>
-                <Col
-                    xs={24}
-                    sm={24}
-                    xl={8}>
+                <Col span={24}>
                     <LatestActivities />
                 </Col>
             </Row>
-        </Flex>
+        </main>
     )
 }

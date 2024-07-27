@@ -3,7 +3,7 @@ import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
-import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage } from './pages'
+import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage, CompanyListPage } from './pages'
 import routerBindings, {
     CatchAllNavigate,
     DocumentTitleHandler,
@@ -11,9 +11,9 @@ import routerBindings, {
 } from '@refinedev/react-router-v6'
 import './App.css'
 import { ROUTE_PATH } from './lib/route-path'
-import Layout from './components/layout/Layout'
 import { resources } from './lib/resources'
 import { notificationProvider } from './lib/providers/notification'
+import Layout from './components/layout/Layout'
 
 function App() {
     return (
@@ -61,6 +61,10 @@ function App() {
                                 <Route
                                     index
                                     element={<MainPage />}
+                                />
+                                <Route
+                                    path={ROUTE_PATH.companies.list()}
+                                    element={<CompanyListPage />}
                                 />
                             </Route>
                         </Routes>
