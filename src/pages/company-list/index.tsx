@@ -1,33 +1,31 @@
-import type { FC } from 'react'
+import { useMemo, type FC } from 'react'
 
-import { CreateButton, DeleteButton, EditButton, FilterDropdown, List, useTable } from '@refinedev/antd'
-import { getDefaultFilter, useGo } from '@refinedev/core'
+import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
+import { useGo, useTable } from '@refinedev/core'
 import { COMPANIES_LIST_QUERY } from '@/graphql/queries'
-import { Input, Space, Table } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Space } from 'antd'
 import Avatar from '@/components/common/Avatar'
 import Text from '@/components/common/Text'
 import { CompaniesListQuery } from '@/graphql/types'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
-import { Company } from '@/graphql/schema.types'
 import { currencyNumber } from '@/lib/utils'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import CustomPagination from '@/components/common/CustomPagination'
+import TableFilter from '@/components/company-list/TableFilter'
 
-type DisplayedCompany = GetFieldsFromList<CompaniesListQuery>
+export type DisplayedCompany = GetFieldsFromList<CompaniesListQuery>
 
 export const CompanyListPage: FC = () => {
     const go = useGo()
 
-    const { tableProps, filters } = useTable<DisplayedCompany>({
+    const {
+        tableQueryResult: { data },
+        current,
+        setCurrent,
+        pageCount,
+        setFilters,
+    } = useTable<DisplayedCompany>({
         resource: 'companies',
-        onSearch: (values: any) => {
-            return [
-                {
-                    field: 'name',
-                    operator: 'contains',
-                    value: values.name,
-                },
-            ]
-        },
         meta: {
             gqlQuery: COMPANIES_LIST_QUERY,
         },
@@ -58,12 +56,27 @@ export const CompanyListPage: FC = () => {
         },
     })
 
-    // console.log('data', tableProps.dataSource)
+    const convertedData = useMemo(
+        () =>
+            data?.data.map((company) => {
+                const { dealsAggregate, ...rest } = company
+
+                return {
+                    ...rest,
+                    value: dealsAggregate[0]?.sum?.value || 0,
+                }
+            }) || [],
+        [data?.data]
+    )
+
+    const hasResult = convertedData.length > 0
+    const hasNext = current < pageCount
+    const hasPrevious = current > 1
 
     return (
-        <List
-            breadcrumb={false}
-            headerButtons={() => (
+        <main className='flex flex-col w-full gap-8'>
+            <section className='flex justify-between w-full'>
+                <Text size='lg'>Companies</Text>
                 <CreateButton
                     onClick={() =>
                         go({
@@ -78,63 +91,85 @@ export const CompanyListPage: FC = () => {
                         })
                     }
                 />
-            )}>
-            <Table
-                {...tableProps}
-                pagination={{ ...tableProps.pagination, showSizeChanger: true }}>
-                <Table.Column<DisplayedCompany>
-                    dataIndex='name'
-                    title='Company Title'
-                    defaultFilteredValue={getDefaultFilter('id', filters)}
-                    filterIcon={<SearchOutlined />}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Input placeholder='Search Company' />
-                        </FilterDropdown>
+            </section>
+            <Table>
+                <TableHeader>
+                    <TableRow className='text-xl font-extrabold bg-slate-100 hover:bg-slate-200'>
+                        <TableHead className='min-w-[600px] px-5 py-4 flex-[0.9]'>
+                            <div className='flex items-center justify-between'>
+                                <span>Company Title</span>
+                                <TableFilter setFilters={setFilters} />
+                            </div>
+                        </TableHead>
+                        <TableHead className='min-w-[100px] px-5 py-4 flex-[0.05] text-center'>
+                            Open deals amount
+                        </TableHead>
+                        <TableHead className='min-w-[100px] px-5 py-4 flex-[0.05] text-center'>Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody className='bg-white'>
+                    {convertedData.length === 0 ? (
+                        <TableRow>
+                            <TableCell
+                                colSpan={3}
+                                className='text-center'>
+                                <Text size='sm'>No companies found</Text>
+                            </TableCell>
+                        </TableRow>
+                    ) : (
+                        convertedData?.map((company) => (
+                            <TableRow
+                                key={company.id}
+                                className='hover:bg-gray-100'>
+                                <TableCell>
+                                    <Space size={10}>
+                                        <Avatar
+                                            shape='square'
+                                            name={company.name}
+                                            src={company.avatarUrl}
+                                        />
+                                        <Text
+                                            className='whitespace-normal'
+                                            size='lg'>
+                                            {company.name}
+                                        </Text>
+                                    </Space>
+                                </TableCell>
+                                <TableCell className='text-center'>
+                                    <Text
+                                        className='font-bold'
+                                        size='lg'>
+                                        {currencyNumber(company.value)}
+                                    </Text>
+                                </TableCell>
+                                <TableCell className='text-center'>
+                                    <Space>
+                                        <EditButton
+                                            hideText
+                                            size='large'
+                                            recordItemId={company.id}
+                                        />
+                                        <DeleteButton
+                                            hideText
+                                            size='large'
+                                            recordItemId={company.id}
+                                        />
+                                    </Space>
+                                </TableCell>
+                            </TableRow>
+                        ))
                     )}
-                    render={(_, company: DisplayedCompany) => (
-                        <Space key={company.id}>
-                            <Avatar
-                                shape='square'
-                                name={company.name}
-                                src={company.avatarUrl}
-                            />
-                            <Text style={{ whiteSpace: 'nowrap' }}>{company.name}</Text>
-                        </Space>
-                    )}
-                />
-
-                <Table.Column<DisplayedCompany>
-                    dataIndex='dealsAggregate'
-                    title='Open deals amount'
-                    fixed='right'
-                    render={(_, company: DisplayedCompany) => (
-                        <Text key={company.id}>{currencyNumber(company?.dealsAggregate?.at(0)?.sum?.value || 0)}</Text>
-                    )}
-                />
-
-                <Table.Column<DisplayedCompany>
-                    dataIndex='id'
-                    title='Actions'
-                    fixed='right'
-                    render={(value) => (
-                        <Space
-                            size={10}
-                            key={value}>
-                            <EditButton
-                                hideText
-                                size='middle'
-                                recordItemId={value}
-                            />
-                            <DeleteButton
-                                hideText
-                                size='middle'
-                                recordItemId={value}
-                            />
-                        </Space>
-                    )}
-                />
+                </TableBody>
             </Table>
-        </List>
+            {hasResult && (
+                <CustomPagination
+                    current={current}
+                    setCurrent={setCurrent}
+                    pageCount={pageCount}
+                    hasPrevious={hasPrevious}
+                    hasNext={hasNext}
+                />
+            )}
+        </main>
     )
 }
