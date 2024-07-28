@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FC } from 'react'
+import { PropsWithChildren, useMemo, useState } from 'react'
 import { CreateButton, DeleteButton, EditButton } from '@refinedev/antd'
 import { useGo, useTable } from '@refinedev/core'
 import { COMPANIES_LIST_QUERY } from '@/graphql/queries'
@@ -10,7 +10,7 @@ import { GetFieldsFromList } from '@refinedev/nestjs-query'
 import { cn, currencyNumber, getDate } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import CustomPagination from '@/components/common/CustomPagination'
-import TableFilter from '@/components/company-list/TableFilter'
+import TableFilter from '@/components/company/list/TableFilter'
 import {
     ColumnDef,
     flexRender,
@@ -19,7 +19,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table'
-import { ArrowUpDown, Link2Icon } from 'lucide-react'
+import { ArrowUpDown, Link2Icon, Slash } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Popover } from '@/components/ui/popover'
@@ -28,12 +28,11 @@ import { Button } from '@/components/ui/button'
 
 export type DisplayedCompany = GetFieldsFromList<CompaniesListQuery>
 
-export const CompanyListPage: FC = () => {
+export const CompanyListPage = ({ children }: PropsWithChildren) => {
     const go = useGo()
 
     const {
         tableQueryResult: { data, isFetching },
-
         current,
         setCurrent,
         pageCount,
@@ -106,8 +105,8 @@ export const CompanyListPage: FC = () => {
                 cell: ({ row }) => (
                     <Text
                         size='md'
-                        className='text-center'>
-                        {row.original.industry}
+                        className='flex justify-center'>
+                        {row.original.industry || <Slash className='rotate-45 size-4' />}
                     </Text>
                 ),
             },
@@ -143,8 +142,8 @@ export const CompanyListPage: FC = () => {
                 cell: ({ row }) => (
                     <Text
                         size='md'
-                        className='text-center'>
-                        {row.original.country}
+                        className='flex justify-center'>
+                        {row.original.country || <Slash className='rotate-45 size-4' />}
                     </Text>
                 ),
             },
@@ -164,7 +163,7 @@ export const CompanyListPage: FC = () => {
                             <Text
                                 size='md'
                                 className='text-center'>
-                                No website
+                                <Slash className='rotate-45 size-4' />
                             </Text>
                         )}
                     </Text>
@@ -265,9 +264,10 @@ export const CompanyListPage: FC = () => {
                     }
                 />
             </section>
-            <Table className='relative'>
+
+            <Table className='relative h-full'>
                 {isFetching && (
-                    <div className='absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
+                    <div className='absolute -translate-y-1/2 h-full-translate-x-1/2 top-1/2 left-1/2'>
                         <LoadingOutlined className='text-4xl' />
                     </div>
                 )}
@@ -323,6 +323,7 @@ export const CompanyListPage: FC = () => {
                     hasNext={hasNext}
                 />
             )}
+            {children}
         </main>
     )
 }

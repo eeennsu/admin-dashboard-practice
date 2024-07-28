@@ -19,3 +19,7 @@
         --chart-5: 340 75% 55%;
     }
 }
+
+.ant-select-selection-search-input {
+    cursor: pointer !important;
+}

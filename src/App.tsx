@@ -1,4 +1,4 @@
-import { Authenticated, GitHubBanner, Refine } from '@refinedev/core'
+import { Authenticated, Refine } from '@refinedev/core'
 import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
@@ -15,11 +15,13 @@ import { resources } from './lib/resources'
 import { notificationProvider } from './lib/providers/notification'
 import Layout from './components/layout/Layout'
 import CompanyCreatePage from './pages/company/create'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
     return (
         <BrowserRouter>
-            <GitHubBanner />
+            <ToastContainer />
             <RefineKbarProvider>
                 <DevtoolsProvider>
                     <Refine
