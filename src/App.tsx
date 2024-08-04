@@ -3,7 +3,7 @@ import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
-import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage, CompanyListPage } from './pages'
+import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage, CompanyListPage, CompanyEditPage } from './pages'
 import routerBindings, {
     CatchAllNavigate,
     DocumentTitleHandler,
@@ -72,6 +72,10 @@ function App() {
                                 <Route
                                     path={ROUTE_PATH.companies.create()}
                                     element={<CompanyCreatePage />}
+                                />
+                                <Route 
+                                    path={ROUTE_PATH.companies.edit()}
+                                    element={<CompanyEditPage />}
                                 />
                             </Route>
                         </Routes>

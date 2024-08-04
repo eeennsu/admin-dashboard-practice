@@ -18,7 +18,8 @@
         "baseUrl": "./src",
         "paths": {
             "@/*": ["./*"]
-        }
+        },
+        "skipDefaultLibCheck": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "vite.config.ts"],

@@ -207,7 +207,7 @@ export const CompanyListPage = ({ children }: PropsWithChildren) => {
                         </PopoverTrigger>
                         <PopoverContent
                             side='top'
-                            className='px-6 py-4 bg-blue-200 rounded-3xl'>
+                            className='px-6 py-4 bg-white border border-gray-300 rounded-3xl'>
                             <div className='flex items-center gap-2'>
                                 <EditButton
                                     hideText
