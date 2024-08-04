@@ -1,7 +1,6 @@
 import type { AuthProvider } from '@refinedev/core'
 import { API_URL, dataProvider } from '@/lib/providers'
 import { ROUTE_PATH } from '@/lib/route-path'
-
 export const authCredentials = {
     email: 'michael.scott@dundermifflin.com',
     password: 'demodemo',

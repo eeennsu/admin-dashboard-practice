@@ -8,6 +8,9 @@ module.exports = {
     plugins: ['react-refresh'],
     rules: {
         'react-refresh/only-export-components': 'warn',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
     },
     settings: {
         'import/resolver': {

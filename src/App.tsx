@@ -3,7 +3,15 @@ import { DevtoolsPanel, DevtoolsProvider } from '@refinedev/devtools'
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import { dataProvider, liveProvider, authProvider } from '@/lib/providers'
-import { MainPage, ForgotPasswordPage, SignUpPage, SignInPage, CompanyListPage, CompanyEditPage } from './pages'
+import {
+    MainPage,
+    ForgotPasswordPage,
+    SignUpPage,
+    SignInPage,
+    CompanyListPage,
+    CompanyEditPage,
+    TaskListPage,
+} from './pages'
 import routerBindings, {
     CatchAllNavigate,
     DocumentTitleHandler,
@@ -40,6 +48,10 @@ function App() {
                         }}>
                         <Routes>
                             <Route
+                                path='/example'
+                                element={<TaskListPage />}
+                            />
+                            <Route
                                 path={ROUTE_PATH.signUp()}
                                 element={<SignUpPage />}
                             />
@@ -65,18 +77,27 @@ function App() {
                                     index
                                     element={<MainPage />}
                                 />
-                                <Route
-                                    path={ROUTE_PATH.companies.list()}
-                                    element={<CompanyListPage />}
-                                />
-                                <Route
-                                    path={ROUTE_PATH.companies.create()}
-                                    element={<CompanyCreatePage />}
-                                />
-                                <Route
-                                    path={ROUTE_PATH.companies.edit()}
-                                    element={<CompanyEditPage />}
-                                />
+                                <Route path={ROUTE_PATH.companies.list()}>
+                                    <Route
+                                        index
+                                        element={<CompanyListPage />}
+                                    />
+                                    <Route
+                                        path={ROUTE_PATH.companies.create()}
+                                        element={<CompanyCreatePage />}
+                                    />
+                                    <Route
+                                        path={ROUTE_PATH.companies.edit()}
+                                        element={<CompanyEditPage />}
+                                    />
+                                </Route>
+
+                                <Route path={ROUTE_PATH.tasks.list()}>
+                                    <Route
+                                        index
+                                        element={<TaskListPage />}
+                                    />
+                                </Route>
                             </Route>
                         </Routes>
                         <RefineKbar />

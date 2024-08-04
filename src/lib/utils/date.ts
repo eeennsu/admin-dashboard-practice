@@ -18,3 +18,29 @@ export const getDate = (stringDate: string): string => {
 
     return date.format('YY.MM.DD')
 }
+
+type DateColors = 'success' | 'processing' | 'error' | 'default' | 'warning'
+
+//  returns a color based on the date
+export const getDateColor = (args: { date: string; defaultColor?: DateColors }): DateColors => {
+    const date = dayjs(args.date)
+    const today = dayjs()
+
+    if (date.isBefore(today)) {
+        return 'error'
+    }
+
+    if (date.isBefore(today.add(3, 'day'))) {
+        return 'warning'
+    }
+
+    if (date.isSame(today, 'day')) {
+        return 'processing'
+    }
+
+    if (date.isAfter(today, 'day')) {
+        return 'success'
+    }
+
+    return args.defaultColor ?? 'default'
+}
