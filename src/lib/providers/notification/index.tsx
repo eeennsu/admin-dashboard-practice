@@ -20,5 +20,5 @@ export const notificationProvider: NotificationProvider = {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     close: (key) => {
         toast.dismiss(key)
-    }
+    },
 }

@@ -73,7 +73,7 @@ function App() {
                                     path={ROUTE_PATH.companies.create()}
                                     element={<CompanyCreatePage />}
                                 />
-                                <Route 
+                                <Route
                                     path={ROUTE_PATH.companies.edit()}
                                     element={<CompanyEditPage />}
                                 />

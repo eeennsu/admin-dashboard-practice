@@ -1,10 +1,11 @@
 import Avatar from '@/components/common/Avatar'
 import SelectOptionWithAvatar from '@/components/company/create/SelectOptionWithAvatar'
+import CompanyContactsTable from '@/components/company/edit/CompanyContactsTable'
 import { UPDATE_COMPANY_MUTATION } from '@/graphql/mutations'
 import { USERS_SELECT_QUERY } from '@/graphql/queries'
 import { UpdateCompanyMutation, UsersSelectQuery } from '@/graphql/types'
 import { COMPANY_SIZE_OPTIONS, COMPANY_INDUSTRY_OPTIONS, COMPANY_BUSINESS_TYPE_OPTIONS } from '@/lib/constants'
-import { selectGenerator } from '@/lib/utils';
+import { selectGenerator } from '@/lib/utils'
 import { Edit, useForm, useSelect } from '@refinedev/antd'
 import { HttpError } from '@refinedev/core'
 import { GetFields, GetFieldsFromList } from '@refinedev/nestjs-query'
@@ -13,13 +14,11 @@ import { DefaultOptionType } from 'antd/es/select'
 import type { FC } from 'react'
 
 export const CompanyEditPage: FC = () => {
-    const {
-        formProps,
-
-        queryResult,
-        saveButtonProps,
-        formLoading,
-    } = useForm<GetFields<UpdateCompanyMutation>, HttpError, GetFields<UpdateCompanyMutation>>({
+    const { formProps, queryResult, saveButtonProps, formLoading } = useForm<
+        GetFields<UpdateCompanyMutation>,
+        HttpError,
+        GetFields<UpdateCompanyMutation>
+    >({
         redirect: false,
         resource: 'companies',
         meta: {
@@ -135,6 +134,11 @@ export const CompanyEditPage: FC = () => {
                             </Form.Item>
                         </Form>
                     </Edit>
+                </Col>
+                <Col
+                    xs={24}
+                    xl={12}>
+                    <CompanyContactsTable />
                 </Col>
             </Row>
         </main>

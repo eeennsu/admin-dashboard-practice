@@ -7,7 +7,7 @@ interface Props {
     status: ContactStatus
 }
 
-export const ContactStatusTag: FC<Props> = ({ status }) => {
+const ContactStatusTag = ({ status }: Props) => {
     let icon: React.ReactNode = null
     let color: TagProps['color'] = undefined
 
@@ -57,3 +57,17 @@ export const ContactStatusTag: FC<Props> = ({ status }) => {
         </Tag>
     )
 }
+
+ContactStatusTag.STATUS = [
+    'CHURNED',
+    'CONTACTED',
+    'INTERESTED',
+    'LOST',
+    'NEGOTIATION',
+    'NEW',
+    'QUALIFIED',
+    'UNQUALIFIED',
+    'WON',
+] as ContactStatus[]
+
+export default ContactStatusTag

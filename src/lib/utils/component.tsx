@@ -1,5 +1,5 @@
 import type { DefaultOptionType } from 'antd/es/select'
-import { cn } from './shadcn';
+import { cn } from './shadcn'
 
 export const selectGenerator = (obj: Record<string, string>, labelClassName?: string): DefaultOptionType[] => {
     const entries = Object.entries(obj)

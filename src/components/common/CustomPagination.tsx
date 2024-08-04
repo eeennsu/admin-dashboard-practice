@@ -12,6 +12,9 @@ interface Props {
     maxPagesToShow?: number
     leftIcon?: ReactNode
     rightIcon?: ReactNode
+    rootClassName?: string
+    contentClassName?: string
+    buttonClassName?: string
 }
 
 const CustomPagination: FC<Props> = ({
@@ -23,6 +26,9 @@ const CustomPagination: FC<Props> = ({
     maxPagesToShow = 3,
     leftIcon,
     rightIcon,
+    rootClassName,
+    contentClassName,
+    buttonClassName,
 }) => {
     const displayedPageNumbers = useMemo(() => {
         const pageNumbers: number[] = []
@@ -42,8 +48,8 @@ const CustomPagination: FC<Props> = ({
     }, [current, pageCount, maxPagesToShow])
 
     return (
-        <ShadPagination>
-            <PaginationContent className='flex gap-6 text-xl'>
+        <ShadPagination className={cn(rootClassName)}>
+            <PaginationContent className={cn('flex gap-6 text-xl', contentClassName)}>
                 <PaginationItem
                     className={cn(hasPrevious ? 'cursor-pointer' : 'opacity-30')}
                     onClick={() => hasPrevious && setCurrent((prev) => prev - 1)}>
@@ -54,8 +60,9 @@ const CustomPagination: FC<Props> = ({
                         <PaginationItem
                             key={pageNum}
                             className={cn(
-                                'cursor-pointer  size-11 flex items-center justify-center',
-                                pageNum === current && 'text-white rounded-full bg-blue-500'
+                                'cursor-pointer size-11 flex items-center justify-center',
+                                pageNum === current && 'text-white rounded-full bg-blue-500',
+                                buttonClassName
                             )}
                             onClick={() => setCurrent(pageNum)}>
                             {pageNum}

@@ -16,5 +16,5 @@ export const getYearAndMonth = (stringDate: string): string => {
 export const getDate = (stringDate: string): string => {
     const date = dayjs(stringDate)
 
-    return date.format('YYYY-MM-DD')
+    return date.format('YY.MM.DD')
 }

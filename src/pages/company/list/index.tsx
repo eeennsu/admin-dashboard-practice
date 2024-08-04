@@ -187,8 +187,8 @@ export const CompanyListPage = ({ children }: PropsWithChildren) => {
                 header: 'Created At',
                 cell: ({ row }) => (
                     <Text
-                        size='md'
-                        className='text-center'>
+                        size='sm'
+                        className='text-center whitespace-nowrap'>
                         {getDate(row.original.createdAt)}
                     </Text>
                 ),
