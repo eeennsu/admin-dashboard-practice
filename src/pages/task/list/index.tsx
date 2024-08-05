@@ -1,15 +1,17 @@
+import KanbanSkeleton from '@/components/skeletons/KanbanSkeleton'
 import BoardCard from '@/components/task/board/BoardCard'
-import KanbanBoard from '@/components/task/kanban/KanbanBoard'
+import KanbanAddCardButton from '@/components/task/kanban/KanbanAddCardButton'
 import KanbanBoardContainer from '@/components/task/kanban/KanbanBoardContainer'
 import KanbanColumn from '@/components/task/kanban/KanbanColumn'
 import KanbanItem from '@/components/task/kanban/KanbanItem'
 import { TASK_STAGES_QUERY, TASKS_QUERY } from '@/graphql/queries'
 import { TasksQuery, TaskStagesQuery } from '@/graphql/types'
+import { DndContext } from '@dnd-kit/core'
 import { useList } from '@refinedev/core'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
-import { useMemo, type FC } from 'react'
+import { PropsWithChildren, useMemo, type FC } from 'react'
 
-export const TaskListPage: FC = () => {
+export const TaskListPage: FC<PropsWithChildren> = ({ children }) => {
     const { data: stagesData, isLoading: isLoadingStages } = useList<GetFieldsFromList<TaskStagesQuery>>({
         resource: 'taskStages',
         filters: [
@@ -59,14 +61,14 @@ export const TaskListPage: FC = () => {
 
         const unassignedStage = tasksData.data.filter((task) => task.stageId === null)
 
-        const grouped = stagesData.data.map((stage) => ({
+        const stagesWithTasks = stagesData.data.map((stage) => ({
             ...stage,
             tasks: tasksData.data.filter((task) => task.stageId?.toString() === stage.id),
         }))
 
         return {
             unassignedStage,
-            stages: grouped,
+            stages: stagesWithTasks,
         }
     }, [stagesData, tasksData])
 
@@ -74,12 +76,16 @@ export const TaskListPage: FC = () => {
         console.log('Add Card')
     }
 
-    console.log({ tasksStages })
+    const isLoading = isLoadingStages || isTasksLoading
+
+    if (isLoading) {
+        return <KanbanSkeleton />
+    }
 
     return (
         <>
             <KanbanBoardContainer>
-                <KanbanBoard>
+                <DndContext>
                     <KanbanColumn
                         id='unassigned'
                         title='Unassigned'
@@ -96,16 +102,38 @@ export const TaskListPage: FC = () => {
                                 />
                             </KanbanItem>
                         ))}
-                    </KanbanColumn>
-                    {/* <KanbanColumn
-                        id='todo'
-                        title='TODO'
-                        count={tasksStages.stages.}
-                    >
 
-                    </KanbanColumn> */}
-                </KanbanBoard>
+                        {!isLoading && tasksStages.unassignedStage.length === 0 && (
+                            <KanbanAddCardButton onClick={() => onAddCard({ stageId: 'unassigned' })} />
+                        )}
+                    </KanbanColumn>
+                    {tasksStages.stages.map((stage) => (
+                        <KanbanColumn
+                            key={stage.id}
+                            id={stage.id}
+                            title={stage.title}
+                            count={stage.tasks.length || 0}
+                            onAddTask={() => onAddCard({ stageId: stage.id })}>
+                            {!isLoading &&
+                                stage.tasks.map((task) => (
+                                    <KanbanItem
+                                        key={task.id}
+                                        id={task.id}
+                                        data={{ ...task, stageId: stage.id }}>
+                                        <BoardCard
+                                            {...task}
+                                            dueDate={task.dueDate || undefined}
+                                        />
+                                    </KanbanItem>
+                                ))}
+                            {!isLoading && tasksStages.unassignedStage.length === 0 && (
+                                <KanbanAddCardButton onClick={() => onAddCard({ stageId: stage.id })} />
+                            )}
+                        </KanbanColumn>
+                    ))}
+                </DndContext>
             </KanbanBoardContainer>
+            {children}
         </>
     )
 }
