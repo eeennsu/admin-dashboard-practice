@@ -25,6 +25,8 @@ import Layout from './components/layout/Layout'
 import CompanyCreatePage from './pages/company/create'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import TaskCreateModalPage from './pages/task/create'
+import TaskEditModalPage from './pages/task/edit'
 
 function App() {
     return (
@@ -92,10 +94,20 @@ function App() {
                                     />
                                 </Route>
 
-                                <Route path={ROUTE_PATH.tasks.list()}>
+                                <Route
+                                    path={ROUTE_PATH.tasks.list()}
+                                    element={
+                                        <TaskListPage>
+                                            <Outlet />
+                                        </TaskListPage>
+                                    }>
                                     <Route
-                                        index
-                                        element={<TaskListPage />}
+                                        path={ROUTE_PATH.tasks.create()}
+                                        element={<TaskCreateModalPage />}
+                                    />
+                                    <Route
+                                        path={ROUTE_PATH.tasks.edit()}
+                                        element={<TaskEditModalPage />}
                                     />
                                 </Route>
                             </Route>

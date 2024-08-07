@@ -8,13 +8,33 @@ import TextIcon from './TextIcon'
 import dayjs from 'dayjs'
 import { cn, getDateColor } from '@/lib/utils'
 import Avatar from '@/components/common/Avatar'
+import { useDelete, useGo } from '@refinedev/core'
 
 interface Props extends GetFieldsFromList<TasksQuery> {}
 
 const BoardCard: FC<Props> = ({ title, completed, createdAt, id, updatedAt, users, description, dueDate, stageId }) => {
     const { token } = theme.useToken()
+    const go = useGo()
+    const { mutate: mutateDeleteTask } = useDelete()
 
-    const onEdit = () => {}
+    const handleEditPage = () => {
+        go({
+            to: `/task/edit/${id}`,
+            type: 'replace',
+        })
+    }
+
+    const handleDeleteTask = () => {
+        mutateDeleteTask({
+            resource: 'tasks',
+            id,
+            mutationMode: 'optimistic',
+            successNotification: false,
+            meta: {
+                operation: 'task',
+            },
+        })
+    }
 
     const dropdownItems = useMemo<MenuProps['items']>(
         () => [
@@ -22,18 +42,18 @@ const BoardCard: FC<Props> = ({ title, completed, createdAt, id, updatedAt, user
                 label: 'View Card',
                 key: 1,
                 icon: <EyeOutlined />,
-                onClick: () => {
-                    onEdit()
-                },
+                onClick: handleEditPage,
             },
             {
                 key: 2,
                 label: 'Delete Card',
                 icon: <DeleteOutlined />,
-                onClick: () => {},
+                onClick: handleDeleteTask,
                 danger: true,
             },
         ],
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     )
 
@@ -65,7 +85,7 @@ const BoardCard: FC<Props> = ({ title, completed, createdAt, id, updatedAt, user
                 title={
                     <Text
                         ellipsis={{ tooltip: title }}
-                        onClick={() => onEdit()}>
+                        onClick={handleEditPage}>
                         {title}
                     </Text>
                 }
