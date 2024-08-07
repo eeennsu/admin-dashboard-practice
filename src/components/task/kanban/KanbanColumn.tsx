@@ -62,7 +62,7 @@ const KanbanColumn: FC<PropsWithChildren<Props>> = ({ id, title, description, co
                     'flex-1 border-2 border-dashed rounded-[8px] px-3 transition-all',
                     isOver ? 'border-gray-400' : 'border-transparent'
                 )}
-                style={{ overflowY: active ? 'unset' : 'scroll' }}>
+                style={{ overflowY: active ? 'unset' : 'auto' }}>
                 <div className='flex flex-col gap-2 mt-3'>{children}</div>
             </div>
         </section>

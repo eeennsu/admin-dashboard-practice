@@ -1,13 +1,15 @@
 import KanbanSkeleton from '@/components/skeletons/KanbanSkeleton'
 import BoardCard from '@/components/task/board/BoardCard'
 import KanbanAddCardButton from '@/components/task/kanban/KanbanAddCardButton'
+import KanbanBoard from '@/components/task/kanban/KanbanBoard'
 import KanbanBoardContainer from '@/components/task/kanban/KanbanBoardContainer'
 import KanbanColumn from '@/components/task/kanban/KanbanColumn'
 import KanbanItem from '@/components/task/kanban/KanbanItem'
+import { UPDATE_TASK_STAGE_MUTATION } from '@/graphql/mutations'
 import { TASK_STAGES_QUERY, TASKS_QUERY } from '@/graphql/queries'
 import { TasksQuery, TaskStagesQuery } from '@/graphql/types'
-import { DndContext } from '@dnd-kit/core'
-import { useList } from '@refinedev/core'
+import { DragEndEvent, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { useList, useUpdate } from '@refinedev/core'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
 import { PropsWithChildren, useMemo, type FC } from 'react'
 
@@ -72,8 +74,51 @@ export const TaskListPage: FC<PropsWithChildren> = ({ children }) => {
         }
     }, [stagesData, tasksData])
 
-    const onAddCard = ({ stageId }: { stageId: string }) => {
+    const { mutate: mutateEditTask } = useUpdate()
+
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10,
+            delay: 250,
+            tolerance: 5,
+        },
+    })
+
+    const touchSensor = useSensor(TouchSensor)
+
+    const sensors = useSensors(mouseSensor, touchSensor)
+
+    const handleAddCard = ({ stageId }: { stageId: string }) => {
         console.log('Add Card')
+    }
+
+    const handleDragEnd = ({ active, over }: DragEndEvent) => {
+        let droppedStageId = over?.id as null | string | undefined
+        const activeStageId = active.id
+
+        const activeData = active?.data?.current as GetFieldsFromList<TasksQuery>
+
+        if (activeData.stageId === droppedStageId) {
+            return
+        }
+
+        if (droppedStageId === 'unassigned') {
+            console.log('Task is dropped in unassigned')
+            droppedStageId = null
+        }
+
+        mutateEditTask({
+            resource: 'tasks',
+            id: activeStageId,
+            values: {
+                stageId: droppedStageId,
+            },
+            meta: {
+                gqlMutation: UPDATE_TASK_STAGE_MUTATION,
+            },
+            successNotification: false,
+            mutationMode: 'optimistic',
+        })
     }
 
     const isLoading = isLoadingStages || isTasksLoading
@@ -85,12 +130,14 @@ export const TaskListPage: FC<PropsWithChildren> = ({ children }) => {
     return (
         <>
             <KanbanBoardContainer>
-                <DndContext>
+                <KanbanBoard
+                    onDragEnd={handleDragEnd}
+                    sensors={sensors}>
                     <KanbanColumn
                         id='unassigned'
                         title='Unassigned'
                         count={tasksStages?.unassignedStage?.length || 0}
-                        onAddTask={() => onAddCard({ stageId: 'unassigned' })}>
+                        onAddTask={() => handleAddCard({ stageId: 'unassigned' })}>
                         {tasksStages?.unassignedStage?.map((unassignedTask) => (
                             <KanbanItem
                                 key={unassignedTask.id}
@@ -104,7 +151,7 @@ export const TaskListPage: FC<PropsWithChildren> = ({ children }) => {
                         ))}
 
                         {!isLoading && tasksStages.unassignedStage.length === 0 && (
-                            <KanbanAddCardButton onClick={() => onAddCard({ stageId: 'unassigned' })} />
+                            <KanbanAddCardButton onClick={() => handleAddCard({ stageId: 'unassigned' })} />
                         )}
                     </KanbanColumn>
                     {tasksStages.stages.map((stage) => (
@@ -113,7 +160,7 @@ export const TaskListPage: FC<PropsWithChildren> = ({ children }) => {
                             id={stage.id}
                             title={stage.title}
                             count={stage.tasks.length || 0}
-                            onAddTask={() => onAddCard({ stageId: stage.id })}>
+                            onAddTask={() => handleAddCard({ stageId: stage.id })}>
                             {!isLoading &&
                                 stage.tasks.map((task) => (
                                     <KanbanItem
@@ -127,11 +174,11 @@ export const TaskListPage: FC<PropsWithChildren> = ({ children }) => {
                                     </KanbanItem>
                                 ))}
                             {!isLoading && tasksStages.unassignedStage.length === 0 && (
-                                <KanbanAddCardButton onClick={() => onAddCard({ stageId: stage.id })} />
+                                <KanbanAddCardButton onClick={() => handleAddCard({ stageId: stage.id })} />
                             )}
                         </KanbanColumn>
                     ))}
-                </DndContext>
+                </KanbanBoard>
             </KanbanBoardContainer>
             {children}
         </>

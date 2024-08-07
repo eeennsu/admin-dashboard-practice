@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { DragOverlay, useDraggable, UseDraggableArguments, UseDroppableArguments,  } from '@dnd-kit/core'
+import { DragOverlay, useDraggable, UseDraggableArguments, UseDroppableArguments } from '@dnd-kit/core'
 import type { FC, PropsWithChildren } from 'react'
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const KanbanItem: FC<PropsWithChildren<Props>> = ({ id, data, children }) => {
-    const { attributes, listeners, setNodeRef, active, transform } = useDraggable({ id, data })
+    const { attributes, listeners, setNodeRef, active } = useDraggable({ id, data })
 
     return (
         <div className='relative'>
