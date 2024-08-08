@@ -18,7 +18,7 @@ const companies = {
 
 const tasks = {
     root() {
-        return ROUTE_PATH.root().concat('tasks')
+        return ROUTE_PATH.root().concat('task')
     },
     list() {
         return tasks.root()
@@ -30,7 +30,7 @@ const tasks = {
         return tasks.root().concat('/new')
     },
     edit() {
-        return tasks.root().concat(`/edit/:id`)
+        return tasks.root().concat('/edit/:id')
     },
 }
 

@@ -32,8 +32,6 @@ const DealsChart: FC = () => {
 
     const dealData = useMemo(() => mapDealsData(data?.data), [data?.data])
 
-    console.log(dealData)
-
     const chartConfig = {
         won: {
             label: 'Won',

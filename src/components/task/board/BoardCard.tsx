@@ -128,7 +128,7 @@ const BoardCard: FC<Props> = ({ title, completed, createdAt, id, updatedAt, user
                     {!!users.length && (
                         <div className='flex flex-wrap gap-1.5 max-w-[114px]'>
                             {users.map((user) => (
-                                <Tooltip>
+                                <Tooltip key={user.id}>
                                     <Avatar
                                         name={user.name}
                                         src={user.avatarUrl}

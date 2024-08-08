@@ -1,4 +1,5 @@
 import { CREATE_TASK_MUTATION } from '@/graphql/mutations'
+import { Task } from '@/graphql/schema.types';
 import { useModalForm } from '@refinedev/antd'
 import { useBack } from '@refinedev/core'
 import { Form, Input, Modal } from 'antd'
@@ -8,7 +9,7 @@ import { useSearchParams } from 'react-router-dom'
 const TaskCreateModalPage: FC = () => {
     const [searchParams] = useSearchParams()
     const back = useBack()
-    const { modalProps, formProps, close } = useModalForm({
+    const { modalProps, formProps, close } = useModalForm<Task>({
         action: 'create',
         resource: 'tasks',
         defaultVisible: true,
@@ -22,7 +23,7 @@ const TaskCreateModalPage: FC = () => {
             {...modalProps}
             onCancel={() => {
                 close()
-                back
+                back()
             }}
             title='Add new task'
             width={512}>
